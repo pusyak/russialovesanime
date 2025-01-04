@@ -7,6 +7,7 @@ import Link from "next/link";
 export default function WatchPage() {
   const params = useParams();
   const episode = params.episode as string;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   return (
     <div className="min-h-screen p-4">
@@ -17,7 +18,7 @@ export default function WatchPage() {
         ← Назад к списку
       </Link>
 
-      <VideoPlayer src={`http://5.35.98.122/video/${episode}`} />
+      <VideoPlayer src={`${apiUrl}/video/${episode}`} />
     </div>
   );
 }

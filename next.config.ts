@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: '5.35.98.122', // твой IP
+        hostname: process.env.NEXT_PUBLIC_API_URL?.replace('http://', '') || '5.35.98.122',
       },
     ],
   },

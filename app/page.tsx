@@ -5,9 +5,10 @@ import Link from "next/link";
 
 export default function Home() {
   const [episodes, setEpisodes] = useState<string[]>([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch("http://5.35.98.122/list")
+    fetch(`${apiUrl}/list`)
       .then((res) => res.json())
       .then((files) => {
         setEpisodes(
@@ -18,7 +19,7 @@ export default function Home() {
           })
         );
       });
-  }, []);
+  }, [apiUrl]);
 
   return (
     <main className="min-h-screen p-8">
