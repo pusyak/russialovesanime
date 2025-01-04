@@ -1,10 +1,21 @@
+@import 'plyr/dist/plyr.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --plyr-color-main: #3b82f6;
+  --plyr-video-background: #000;
+}
+
+.dark {
+  --plyr-video-background: #1a1b1e;
+}
+
+.plyr {
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {

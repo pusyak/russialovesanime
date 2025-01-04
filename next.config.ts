@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '5.35.98.122', // твой IP
+      },
+    ],
+  },
+  // Добавим это для продакшена
+  output: 'standalone',
 };
 
 export default nextConfig;
