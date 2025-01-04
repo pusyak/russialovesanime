@@ -25,18 +25,20 @@ export default function VideoPlayer({ src }: VideoPlayerProps) {
         "volume",
         "fullscreen",
       ],
-      keyboard: { focused: true, global: true },
+      keyboard: { focused: false, global: false },
     });
 
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!videoRef.current) return;
 
       if (e.key === "ArrowLeft") {
+        e.preventDefault();
         videoRef.current.currentTime = Math.max(
           0,
           videoRef.current.currentTime - 5
         );
       } else if (e.key === "ArrowRight") {
+        e.preventDefault();
         videoRef.current.currentTime = Math.min(
           videoRef.current.duration,
           videoRef.current.currentTime + 5
