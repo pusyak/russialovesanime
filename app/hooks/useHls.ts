@@ -30,149 +30,112 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
 
         const video = videoRef.current
 
-        // Cleanup previous instances
-        if (playerRef.current) {
-            playerRef.current.destroy()
-        }
-        if (hlsRef.current) {
-            hlsRef.current.destroy()
-            hlsRef.current = null
-        }
-
-        hlsRef.current = new Hls({
+        const hls = new Hls({
             debug: false,
             enableWorker: true,
-            startLevel: -1, // Auto quality
-            capLevelToPlayerSize: false // Отключаем автоматическое ограничение качества
+            startLevel: -1,
+            capLevelToPlayerSize: false
         })
 
-        hlsRef.current.loadSource(src)
-        hlsRef.current.attachMedia(video)
-
-        return () => {
-            if (playerRef.current) {
-                playerRef.current.destroy()
-            }
-            if (hlsRef.current) {
-                hlsRef.current.destroy()
-            }
-        }
-    }, [src, videoRef])
-
-    // Отдельный useEffect для Plyr
-    useEffect(() => {
-        if (!videoRef.current || !hlsRef.current) return
-
-        const video = videoRef.current
-        const hls = hlsRef.current
+        hlsRef.current = hls
+        hls.loadSource(src)
+        hls.attachMedia(video)
 
         let qualityMap: number[] = []
         const qualityToLevelIndex = new Map<number, number>()
         let qualityOptions: string[] = []
+        let player: PlyrWithConfig | null = null
 
-        const initQualitySettings = (levels: { bitrate: number }[]) => {
-            // Convert bitrates to quality numbers
+        const initQualitySettings = (levels: { bitrate: number; height?: number }[]) => {
+            console.log("Available levels:", levels)
+
             qualityMap = levels.map((level) => {
                 const bitrate = level.bitrate
-                const quality = bitrate > 2000000 ? 1080 : bitrate > 1000000 ? 720 : 480
-                console.log(`🎥 Mapping bitrate ${bitrate} to ${quality}p`)
-                return quality
+                if (bitrate >= 2800000) return 720
+                if (bitrate >= 1400000) return 480
+                return 360
             })
 
-            console.log("🎥 Quality map:", qualityMap)
+            console.log("Quality map:", qualityMap)
 
-            // Добавляем авто-качество в начало списка
             const uniqueQualities = Array.from(new Set(qualityMap)).sort((a, b) => b - a)
             qualityOptions = ["auto", ...uniqueQualities.map((q) => q.toString())]
 
-            // Create reverse mapping for quality to level index
+            console.log("Quality options:", qualityOptions)
+
             qualityMap.forEach((quality, index) => {
                 qualityToLevelIndex.set(quality, index)
             })
+
+            console.log("Quality to level mapping:", Array.from(qualityToLevelIndex.entries()))
         }
 
-        const handleQualityChange = (quality: string, playerInstance: PlyrWithConfig) => {
-            console.log("🎥 Trying to change quality to:", quality)
-            console.log("🎥 Current levels:", hls.levels)
-            console.log("🎥 Current Plyr quality:", playerInstance.quality)
+        const handleQualityChange = (quality: string) => {
+            if (!player) return
 
             if (quality === "auto") {
-                console.log("🎥 Setting auto quality mode")
                 hls.currentLevel = -1
                 hls.loadLevel = -1
                 hls.nextLevel = -1
-                playerInstance.quality = "auto" as any
             } else {
                 const qualityNum = parseInt(quality)
-                console.log("🎥 Looking for quality:", qualityNum)
                 const levelIndex = qualityToLevelIndex.get(qualityNum)
-                console.log("🎥 Found level index for quality:", levelIndex)
 
                 if (levelIndex !== undefined) {
-                    hls.config.startLevel = levelIndex
                     hls.currentLevel = levelIndex
-                    playerInstance.quality = quality as any
-                    console.log("🎥 Quality forced to level:", levelIndex)
                 }
             }
         }
 
-        // Ждем пока HLS распарсит манифест
         hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-            console.log("🎥 Available levels:", data.levels)
             initQualitySettings(data.levels)
 
-            const player = new Plyr(video, {
+            player = new Plyr(video, {
                 ...BASE_PLYR_CONFIG,
                 quality: {
                     default: "auto",
                     options: qualityOptions,
                     forced: true,
-                    onChange: (quality: string) => handleQualityChange(quality, player)
+                    onChange: handleQualityChange
                 } as unknown as NonNullable<Options["quality"]>
             } satisfies PlyrOptions) as PlyrWithConfig
 
-            // Set custom labels
             player.config.i18n = {
                 ...player.config.i18n,
                 qualityLabel: "Качество",
                 quality: {
                     auto: "Авто",
-                    "480": "480p SD",
                     "720": "720p HD",
-                    "1080": "1080p HD"
+                    "480": "480p",
+                    "360": "360p"
                 }
             }
 
             playerRef.current = player
 
-            // Update auto quality label when quality changes
             hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
-                console.log("🎥 Level switched event:", data)
-                console.log("🎥 Current level:", hls.currentLevel)
+                console.log("Level switched:", {
+                    level: data.level,
+                    currentQuality: player?.quality,
+                    availableLevels: hls.levels,
+                    currentLevel: hls.currentLevel
+                })
 
-                const currentQuality = player.quality as unknown as string
-                console.log("🎥 Current Plyr quality:", currentQuality)
-
-                if (currentQuality === "auto" && hls.currentLevel === -1) {
+                if ((player?.quality as unknown as string) === "auto" && hls.currentLevel === -1) {
                     const height = qualityMap[data.level]
-                    console.log("🎥 Auto quality changed to height:", height)
                     const autoSpan = document.querySelector(".plyr__menu__container [data-plyr='quality'][value='auto'] span")
                     if (autoSpan) {
                         autoSpan.textContent = `Авто (${height}p)`
                     }
                 }
             })
-
-            console.log("🎥 Unique qualities:", qualityOptions)
         })
 
         return () => {
-            if (playerRef.current) {
-                playerRef.current.destroy()
-            }
+            player?.destroy()
+            hls.destroy()
         }
-    }, [videoRef])
+    }, [src, videoRef])
 
     return { playerRef, hlsRef }
 }

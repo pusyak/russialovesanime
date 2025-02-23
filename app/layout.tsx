@@ -1,38 +1,44 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
+import { BackgroundProvider } from "./contexts/BackgroundContext"
+import Background from "./components/Background"
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+    variable: "--font-geist-sans",
+    subsets: ["latin"]
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+    variable: "--font-geist-mono",
+    subsets: ["latin"]
+})
 
 export const metadata: Metadata = {
-  title: "Anime Player",
-  description: "Смотрите аниме онлайн",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1b1e" },
-  ],
-};
+    title: "Anime Player",
+    description: "Смотрите аниме онлайн",
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "white" },
+        { media: "(prefers-color-scheme: dark)", color: "#1a1b1e" }
+    ]
+}
 
 export default function RootLayout({
-  children,
+    children
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode
 }>) {
-  return (
-    <html lang="ru" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-[#1a1b1e] text-black dark:text-white`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html
+            lang="ru"
+            className="dark"
+        >
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-[#1a1b1e] text-black dark:text-white`}>
+                <BackgroundProvider>
+                    <Background />
+                    {children}
+                </BackgroundProvider>
+            </body>
+        </html>
+    )
 }
