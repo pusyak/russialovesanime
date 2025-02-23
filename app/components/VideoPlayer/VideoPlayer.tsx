@@ -47,5 +47,9 @@ function HLSPlayer({ src }: { src: string }) {
 }
 
 export default function VideoPlayer({ src, isHls = false }: VideoPlayerProps) {
-    return isHls ? <HLSPlayer src={src} /> : <RegularPlayer src={src} />
+    if (isHls) {
+        return <HLSPlayer src={src} />
+    }
+
+    return <RegularPlayer src={src} />
 }
