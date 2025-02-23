@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react"
 
 const CHANGE_INTERVAL = 5 * 60 * 1000 // 5 минут
-const BG_OPTIONS = ["ass-bg.jpeg", "tit-bg.gif", "tit-bg2.gif"]
+const BG_OPTIONS = ["ass-bg.jpeg", "tit-bg2.gif"]
 
 type BackgroundContextType = {
     bgUrl: string
