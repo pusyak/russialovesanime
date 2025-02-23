@@ -5,4 +5,4 @@ export interface VideoPlayerProps {
     isHls?: boolean
 }
 
-export interface PlyrOptions extends PlyrBaseOptions {}
+export type PlyrOptions = PlyrBaseOptions

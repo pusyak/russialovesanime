@@ -11,12 +11,13 @@ import { BASE_PLYR_CONFIG } from "./config"
 
 function RegularPlayer({ src }: { src: string }) {
     const videoRef = useRef<HTMLVideoElement>(null)
+    const playerRef = useRef<Plyr>(null)
     useKeyboardShortcuts(videoRef)
 
     useEffect(() => {
         if (!videoRef.current) return
 
-        const player = new Plyr(videoRef.current)
+        playerRef.current = new Plyr(videoRef.current, BASE_PLYR_CONFIG)
     }, [])
 
     return (
@@ -34,7 +35,7 @@ function RegularPlayer({ src }: { src: string }) {
 
 function HLSPlayer({ src }: { src: string }) {
     const videoRef = useRef<HTMLVideoElement>(null)
-    const { playerRef } = useHls(videoRef, src)
+    useHls(videoRef, src)
     useKeyboardShortcuts(videoRef)
 
     return (

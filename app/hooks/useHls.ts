@@ -67,10 +67,10 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
         const hls = hlsRef.current
 
         let qualityMap: number[] = []
-        let qualityToLevelIndex = new Map<number, number>()
+        const qualityToLevelIndex = new Map<number, number>()
         let qualityOptions: string[] = []
 
-        const initQualitySettings = (levels: any[]) => {
+        const initQualitySettings = (levels: { bitrate: number }[]) => {
             // Convert bitrates to quality numbers
             qualityMap = levels.map((level) => {
                 const bitrate = level.bitrate
@@ -172,7 +172,7 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
                 playerRef.current.destroy()
             }
         }
-    }, [videoRef, hlsRef.current])
+    }, [videoRef])
 
     return { playerRef, hlsRef }
 }
