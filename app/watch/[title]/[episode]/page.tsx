@@ -38,7 +38,6 @@ export default function WatchPage() {
                 })
                 const episode = sortedFiles[episodeNumber - 1]
                 if (episode) {
-                    console.log("Episode data:", episode)
                     setFilename(episode.filename)
                     setHasHls(episode.hasHls)
                 }
@@ -50,9 +49,6 @@ export default function WatchPage() {
     const hlsFilename = filename.replace(".mp4", "")
 
     const videoUrl = hasHls ? `${apiUrl}/hls/bluelock/${encodeURIComponent(hlsFilename)}/master.m3u8` : `${apiUrl}/video/${encodeURIComponent(cleanFileName(title))}/${encodeURIComponent(filename)}`
-
-    console.log("Video URL:", videoUrl)
-    console.log("HLS enabled:", hasHls)
 
     return (
         <div className="min-h-screen p-4">

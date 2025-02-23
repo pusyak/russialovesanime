@@ -47,27 +47,20 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
         let player: PlyrWithConfig | null = null
 
         const initQualitySettings = (levels: { bitrate: number; height?: number }[]) => {
-            console.log("Available levels:", levels)
-
             qualityMap = levels.map((level) => {
                 const bitrate = level.bitrate
+                if (bitrate >= 5000000) return 1080
                 if (bitrate >= 2800000) return 720
                 if (bitrate >= 1400000) return 480
                 return 360
             })
 
-            console.log("Quality map:", qualityMap)
-
             const uniqueQualities = Array.from(new Set(qualityMap)).sort((a, b) => b - a)
             qualityOptions = ["auto", ...uniqueQualities.map((q) => q.toString())]
-
-            console.log("Quality options:", qualityOptions)
 
             qualityMap.forEach((quality, index) => {
                 qualityToLevelIndex.set(quality, index)
             })
-
-            console.log("Quality to level mapping:", Array.from(qualityToLevelIndex.entries()))
         }
 
         const handleQualityChange = (quality: string) => {
@@ -114,13 +107,6 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
             playerRef.current = player
 
             hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
-                console.log("Level switched:", {
-                    level: data.level,
-                    currentQuality: player?.quality,
-                    availableLevels: hls.levels,
-                    currentLevel: hls.currentLevel
-                })
-
                 if ((player?.quality as unknown as string) === "auto" && hls.currentLevel === -1) {
                     const height = qualityMap[data.level]
                     const autoSpan = document.querySelector(".plyr__menu__container [data-plyr='quality'][value='auto'] span")
