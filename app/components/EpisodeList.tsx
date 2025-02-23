@@ -33,7 +33,7 @@ export default function EpisodeList({ title }: EpisodeListProps) {
             {episodes.map((episode, index) => (
                 <Link
                     key={episode.filename}
-                    href={`/watch/${title}/${encodeURIComponent(episode.filename)}`}
+                    href={`/watch/${title}/episode-${index + 1}`}
                     className="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition"
                 >
                     <span className="text-xl">Эпизод {index + 1}</span>
