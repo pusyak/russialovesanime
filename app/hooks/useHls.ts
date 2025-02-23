@@ -31,10 +31,11 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
         const video = videoRef.current
 
         const hls = new Hls({
-            debug: false,
             enableWorker: true,
-            startLevel: -1,
-            capLevelToPlayerSize: false
+            startLevel: 3,
+            capLevelToPlayerSize: false,
+            autoStartLoad: true,
+            startFragPrefetch: true
         })
 
         hlsRef.current = hls
