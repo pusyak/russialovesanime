@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import Plyr from "plyr"
+import Plyr from "plyr/dist/plyr"
 import { BASE_PLYR_CONFIG } from "../utils/video"
 
 export function usePlyr(videoRef: React.RefObject<HTMLVideoElement | null>, src: string) {

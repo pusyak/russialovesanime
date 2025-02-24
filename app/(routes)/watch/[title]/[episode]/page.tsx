@@ -27,7 +27,8 @@ export default function WatchPage() {
         filename: episodeData?.filename || "",
         hasHls: episodeData?.hasHls || false,
         title,
-        apiUrl
+        apiUrl,
+        videoRef
     })
 
     if (error) return <div className="min-h-screen p-4 text-red-500">{error}</div>

@@ -5,7 +5,11 @@ export const DEFAULT_CONTROLS = ["play-large", "play", "progress", "current-time
 
 export const BASE_PLYR_CONFIG: PlyrOptions = {
     controls: DEFAULT_CONTROLS,
-    settings: ["quality"]
+    settings: ["quality"],
+    previewThumbnails: {
+        enabled: true,
+        src: "/previews/test/test.gif"
+    }
 }
 
 export const HLS_CONFIG = {

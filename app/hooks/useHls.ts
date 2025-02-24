@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Hls from "hls.js"
-import Plyr from "plyr"
+import Plyr from "plyr/dist/plyr"
 import type { Options } from "plyr"
 import { PlyrOptions } from "../types/player"
 import { BASE_PLYR_CONFIG } from "../utils/video"
