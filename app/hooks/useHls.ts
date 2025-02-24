@@ -37,7 +37,11 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
             startLevel: 3,
             capLevelToPlayerSize: false,
             autoStartLoad: true,
-            startFragPrefetch: true
+            startFragPrefetch: true,
+            maxBufferLength: 30,
+            maxMaxBufferLength: 600,
+            maxBufferSize: 60 * 1000 * 1000,
+            backBufferLength: 30
         })
 
         hlsRef.current = hls
