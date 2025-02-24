@@ -7,8 +7,7 @@ export const BASE_PLYR_CONFIG: PlyrOptions = {
     controls: DEFAULT_CONTROLS,
     settings: ["quality"],
     previewThumbnails: {
-        enabled: true,
-        src: "/previews/test/test.gif"
+        enabled: true
     }
 }
 

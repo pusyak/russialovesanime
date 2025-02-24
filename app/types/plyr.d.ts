@@ -22,7 +22,7 @@ declare module "plyr" {
         }
         previewThumbnails?: {
             enabled: boolean
-            src: string
+            src?: string
         }
     }
 }
