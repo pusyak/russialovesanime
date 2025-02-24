@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation"
 import VideoPlayer from "@/app/components/VideoPlayer/VideoPlayer"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useVideoUrl } from "@/app/hooks/useVideoUrl"
 import { fetchEpisode } from "@/app/services/episodes"
 import type { Episode } from "@/app/services/episodes"
@@ -15,6 +15,7 @@ export default function WatchPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const [episodeData, setEpisodeData] = useState<Episode | null>(null)
     const [error, setError] = useState<string>("")
+    const videoRef = useRef<HTMLVideoElement>(null)
 
     useEffect(() => {
         fetchEpisode(title, episode)
@@ -45,6 +46,7 @@ export default function WatchPage() {
                 <VideoPlayer
                     src={videoUrl}
                     isHls={episodeData.hasHls}
+                    videoRef={videoRef}
                 />
             )}
         </div>

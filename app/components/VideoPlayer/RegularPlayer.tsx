@@ -10,10 +10,10 @@ import { BASE_PLYR_CONFIG } from "@/app/utils/video"
 
 interface RegularPlayerProps {
     src: string
+    videoRef: React.RefObject<HTMLVideoElement | null>
 }
 
-export function RegularPlayer({ src }: RegularPlayerProps) {
-    const videoRef = useRef<HTMLVideoElement>(null)
+export function RegularPlayer({ src, videoRef }: RegularPlayerProps) {
     const playerRef = useRef<Plyr>(null)
     const isFullscreen = useFullscreenState()
     useKeyboardShortcuts(videoRef)
@@ -22,7 +22,7 @@ export function RegularPlayer({ src }: RegularPlayerProps) {
         if (!videoRef.current) return
 
         playerRef.current = new Plyr(videoRef.current, BASE_PLYR_CONFIG)
-    }, [])
+    })
 
     return (
         <video

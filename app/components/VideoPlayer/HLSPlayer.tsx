@@ -1,17 +1,15 @@
 "use client"
 
-import { useRef } from "react"
-
 import { useHls } from "../../hooks/useHls"
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts"
 import { useFullscreenState } from "../../hooks/useFullscreenState"
 
 interface HLSPlayerProps {
     src: string
+    videoRef: React.RefObject<HTMLVideoElement | null>
 }
 
-export function HLSPlayer({ src }: HLSPlayerProps) {
-    const videoRef = useRef<HTMLVideoElement>(null)
+export function HLSPlayer({ src, videoRef }: HLSPlayerProps) {
     const isFullscreen = useFullscreenState()
     useHls(videoRef, src)
     useKeyboardShortcuts(videoRef)

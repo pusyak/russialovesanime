@@ -24,6 +24,7 @@ export interface QualityLevel {
 export interface VideoPlayerProps {
     src: string
     isHls?: boolean
+    videoRef: React.RefObject<HTMLVideoElement | null>
 }
 
 export type { Options as PlyrOptions } from "plyr"
