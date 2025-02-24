@@ -10,7 +10,6 @@ import type { PlyrWithConfig } from "../types/player"
 import { HLS_CONFIG, QUALITY_LABELS, createQualityOptions, createQualityToLevelMap, mapLevelsToQualities, updateAutoQualityLabel } from "../utils/video"
 
 export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: string) {
-    const playerRef = useRef<PlyrWithConfig | null>(null)
     const hlsRef = useRef<Hls | null>(null)
 
     useEffect(() => {
@@ -47,8 +46,6 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
                 quality: QUALITY_LABELS
             }
 
-            playerRef.current = player
-
             hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
                 if ((player?.quality as unknown as string) === "auto" && hls.currentLevel === -1) {
                     const height = qualityMap[data.level]
@@ -64,5 +61,5 @@ export function useHls(videoRef: React.RefObject<HTMLVideoElement | null>, src: 
         }
     }, [src, videoRef])
 
-    return { playerRef, hlsRef }
+    return { hlsRef }
 }

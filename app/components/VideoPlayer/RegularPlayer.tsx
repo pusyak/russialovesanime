@@ -1,12 +1,8 @@
 "use client"
 
-import { useRef, useEffect } from "react"
-import Plyr from "plyr"
 import "plyr/dist/plyr.css"
-
-import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts"
-import { useFullscreenState } from "../../hooks/useFullscreenState"
-import { BASE_PLYR_CONFIG } from "@/app/utils/video"
+import { usePlyr } from "../../hooks/usePlyr"
+import { BaseVideoPlayer } from "./BaseVideoPlayer"
 
 interface RegularPlayerProps {
     src: string
@@ -14,25 +10,14 @@ interface RegularPlayerProps {
 }
 
 export function RegularPlayer({ src, videoRef }: RegularPlayerProps) {
-    const playerRef = useRef<Plyr>(null)
-    const isFullscreen = useFullscreenState()
-    useKeyboardShortcuts(videoRef)
-
-    useEffect(() => {
-        if (!videoRef.current) return
-
-        playerRef.current = new Plyr(videoRef.current, BASE_PLYR_CONFIG)
-    })
+    usePlyr(videoRef, src)
 
     return (
-        <video
-            ref={videoRef}
-            className={`w-full aspect-video ${!isFullscreen ? "max-h-[calc(100vh-theme(spacing.24))]" : ""}`}
-        >
+        <BaseVideoPlayer videoRef={videoRef}>
             <source
                 src={src}
                 type="video/mp4"
             />
-        </video>
+        </BaseVideoPlayer>
     )
 }
