@@ -5,11 +5,8 @@ import VideoPlayer from "@/app/components/VideoPlayer/VideoPlayer"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useVideoUrl } from "@/app/hooks/useVideoUrl"
-
-interface Episode {
-    filename: string
-    hasHls: boolean
-}
+import { fetchEpisode } from "@/app/services/episodes"
+import type { Episode } from "@/app/services/episodes"
 
 export default function WatchPage() {
     const params = useParams()
@@ -20,14 +17,10 @@ export default function WatchPage() {
     const [error, setError] = useState<string>("")
 
     useEffect(() => {
-        fetch(`${apiUrl}/episodes/${encodeURIComponent(title)}/${episode}`)
-            .then((res) => {
-                if (!res.ok) throw new Error("Episode not found")
-                return res.json()
-            })
-            .then((data) => setEpisodeData(data))
+        fetchEpisode(title, episode)
+            .then(setEpisodeData)
             .catch((err) => setError(err.message))
-    }, [title, episode, apiUrl])
+    }, [title, episode])
 
     const videoUrl = useVideoUrl({
         filename: episodeData?.filename || "",

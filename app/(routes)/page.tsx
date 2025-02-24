@@ -1,6 +1,6 @@
 "use client"
 
-import AnimeList from "./components/AnimeList"
+import AnimeList from "../components/AnimeList"
 
 export default function Home() {
     return (
