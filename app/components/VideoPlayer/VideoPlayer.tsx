@@ -1,29 +1,25 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect } from "react"
 import Plyr from "plyr"
 import "plyr/dist/plyr.css"
 
 import { VideoPlayerProps } from "./types"
 import { useHls } from "../../hooks/useHls"
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts"
+import { useFullscreenState } from "../../hooks/useFullscreenState"
 import { BASE_PLYR_CONFIG } from "./config"
 
 function RegularPlayer({ src }: { src: string }) {
     const videoRef = useRef<HTMLVideoElement>(null)
     const playerRef = useRef<Plyr>(null)
-    const [isFullscreen, setIsFullscreen] = useState(false)
+    const isFullscreen = useFullscreenState()
     useKeyboardShortcuts(videoRef)
 
     useEffect(() => {
         if (!videoRef.current) return
 
         playerRef.current = new Plyr(videoRef.current, BASE_PLYR_CONFIG)
-
-        // Слушаем события фулскрина
-        document.addEventListener("fullscreenchange", () => {
-            setIsFullscreen(!!document.fullscreenElement)
-        })
     }, [])
 
     return (
@@ -41,16 +37,9 @@ function RegularPlayer({ src }: { src: string }) {
 
 function HLSPlayer({ src }: { src: string }) {
     const videoRef = useRef<HTMLVideoElement>(null)
-    const [isFullscreen, setIsFullscreen] = useState(false)
+    const isFullscreen = useFullscreenState()
     useHls(videoRef, src)
     useKeyboardShortcuts(videoRef)
-
-    useEffect(() => {
-        // Слушаем события фулскрина
-        document.addEventListener("fullscreenchange", () => {
-            setIsFullscreen(!!document.fullscreenElement)
-        })
-    }, [])
 
     return (
         <video

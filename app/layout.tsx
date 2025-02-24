@@ -16,7 +16,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
     title: "Anime Player",
-    description: "Смотрите аниме онлайн",
+    description: "Смотрите аниме онлайн"
+}
+
+export const viewport = {
     themeColor: [
         { media: "(prefers-color-scheme: light)", color: "white" },
         { media: "(prefers-color-scheme: dark)", color: "#1a1b1e" }

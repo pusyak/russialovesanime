@@ -4,51 +4,40 @@ import { useParams } from "next/navigation"
 import VideoPlayer from "@/app/components/VideoPlayer/VideoPlayer"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useVideoUrl } from "@/app/hooks/useVideoUrl"
 
 interface Episode {
     filename: string
     hasHls: boolean
 }
 
-// Функция для очистки имени файла (такая же как на бэке)
-function cleanFileName(fileName: string) {
-    return fileName
-        .replace(/\[([^\]]+)\]/g, "_$1_") // [Text] -> _Text_
-        .replace(/\s+/g, "_") // пробелы -> _
-}
-
 export default function WatchPage() {
     const params = useParams()
     const title = decodeURIComponent(params.title as string)
     const episode = decodeURIComponent(params.episode as string)
-    const episodeNumber = parseInt(episode.replace("episode-", ""))
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const [filename, setFilename] = useState<string>("")
-    const [hasHls, setHasHls] = useState<boolean>(false)
+    const [episodeData, setEpisodeData] = useState<Episode | null>(null)
+    const [error, setError] = useState<string>("")
 
     useEffect(() => {
-        // Получаем список файлов и находим нужный по номеру эпизода
-        fetch(`${apiUrl}/list/${encodeURIComponent(cleanFileName(title))}`)
-            .then((res) => res.json())
-            .then((files) => {
-                const sortedFiles = files.sort((a: Episode, b: Episode) => {
-                    const numA = parseInt(a.filename.match(/\d+/)?.[0] || "0")
-                    const numB = parseInt(b.filename.match(/\d+/)?.[0] || "0")
-                    return numA - numB
-                })
-                const episode = sortedFiles[episodeNumber - 1]
-                if (episode) {
-                    setFilename(episode.filename)
-                    setHasHls(episode.hasHls)
-                }
+        fetch(`${apiUrl}/episodes/${encodeURIComponent(title)}/${episode}`)
+            .then((res) => {
+                if (!res.ok) throw new Error("Episode not found")
+                return res.json()
             })
-    }, [apiUrl, title, episodeNumber])
+            .then((data) => setEpisodeData(data))
+            .catch((err) => setError(err.message))
+    }, [title, episode, apiUrl])
 
-    if (!filename) return <div>Loading...</div>
+    const videoUrl = useVideoUrl({
+        filename: episodeData?.filename || "",
+        hasHls: episodeData?.hasHls || false,
+        title,
+        apiUrl
+    })
 
-    const hlsFilename = filename.replace(".mp4", "")
-
-    const videoUrl = hasHls ? `${apiUrl}/hls/bluelock/${encodeURIComponent(hlsFilename)}/master.m3u8` : `${apiUrl}/video/${encodeURIComponent(cleanFileName(title))}/${encodeURIComponent(filename)}`
+    if (error) return <div className="min-h-screen p-4 text-red-500">{error}</div>
+    if (!episodeData) return <div className="min-h-screen p-4">Loading...</div>
 
     return (
         <div className="min-h-screen p-4">
@@ -59,10 +48,12 @@ export default function WatchPage() {
                 ← Назад к списку
             </Link>
 
-            <VideoPlayer
-                src={videoUrl}
-                isHls={hasHls}
-            />
+            {videoUrl && (
+                <VideoPlayer
+                    src={videoUrl}
+                    isHls={episodeData.hasHls}
+                />
+            )}
         </div>
     )
 }
