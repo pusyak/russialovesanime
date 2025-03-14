@@ -7,7 +7,8 @@ export const BASE_PLYR_CONFIG: PlyrOptions = {
     controls: DEFAULT_CONTROLS,
     settings: ["quality"],
     previewThumbnails: {
-        enabled: true
+        enabled: true,
+        src: process.env.NEXT_PUBLIC_API_URL + "/bluelock/previews/_Erai-raws__Blue_Lock_-_11__1080p_/thumbnails.vtt"
     }
 }
 
